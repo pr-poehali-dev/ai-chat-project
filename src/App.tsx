@@ -4,6 +4,7 @@ import { Toaster as Sonner } from '@/components/ui/sonner';
 import { TooltipProvider } from '@/components/ui/tooltip';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { LangProvider } from '@/lib/LangContext';
+import { useLang } from '@/lib/LangContext';
 import Navbar from '@/components/Navbar';
 import LandingPage from '@/pages/LandingPage';
 import ChatPage from '@/pages/ChatPage';
@@ -15,6 +16,7 @@ const queryClient = new QueryClient();
 
 function OxiwisApp() {
   const [page, setPage] = useState('home');
+  const { tr } = useLang();
 
   const renderPage = () => {
     switch (page) {
@@ -46,14 +48,19 @@ function OxiwisApp() {
             <span className="font-bold text-white text-sm">OxiwisAI</span>
           </button>
           <div className="flex items-center gap-2">
-            {['home', 'about', 'docs', 'history'].map(p => (
+            {[
+              { key: 'home', label: `← ${tr('nav_home')}` },
+              { key: 'about', label: tr('nav_about') },
+              { key: 'docs', label: tr('nav_docs') },
+              { key: 'history', label: tr('nav_history') },
+            ].map(p => (
               <button
-                key={p}
-                onClick={() => setPage(p)}
+                key={p.key}
+                onClick={() => setPage(p.key)}
                 className="text-xs px-3 py-1.5 rounded-lg transition-all"
                 style={{ color: 'rgba(255,255,255,0.45)', background: 'transparent' }}
               >
-                {p === 'home' ? '← Главная' : p === 'about' ? 'О модели' : p === 'docs' ? 'Docs' : 'История'}
+                {p.label}
               </button>
             ))}
           </div>
