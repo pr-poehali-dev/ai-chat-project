@@ -85,14 +85,14 @@ export default function AboutPage({ setPage }: AboutPageProps) {
         {/* Stats row */}
         <div className="grid grid-cols-3 gap-4 mb-12">
           {[
-            { icon: 'Zap', val: '~1T', label: 'Параметров' },
-            { icon: 'Globe', val: '5+', label: 'Языков' },
-            { icon: 'Clock', val: '256', label: 'Запросов/день' },
+            { icon: 'Zap', val: '~1T', labelKey: 'about_stat_params' },
+            { icon: 'Globe', val: '5+', labelKey: 'about_stat_langs' },
+            { icon: 'Clock', val: '256', labelKey: 'about_stat_req' },
           ].map(s => (
             <div key={s.val} className="p-4 rounded-2xl text-center" style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.07)' }}>
               <Icon name={s.icon} size={20} style={{ color: 'rgba(255,255,255,0.5)', display: 'block', margin: '0 auto 8px' }} />
               <div className="text-2xl font-black text-white mb-1" style={{ fontFamily: 'Golos Text' }}>{s.val}</div>
-              <div className="text-xs" style={{ color: 'rgba(255,255,255,0.4)' }}>{s.label}</div>
+              <div className="text-xs" style={{ color: 'rgba(255,255,255,0.4)' }}>{tr(s.labelKey)}</div>
             </div>
           ))}
         </div>
@@ -104,7 +104,7 @@ export default function AboutPage({ setPage }: AboutPageProps) {
             className="ox-btn-primary flex items-center gap-2 px-8 py-4 rounded-2xl font-semibold"
           >
             <Icon name="MessageSquare" size={18} />
-            Попробовать OxiwisAI
+            {tr('about_try')}
           </button>
         </div>
       </div>

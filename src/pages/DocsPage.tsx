@@ -45,7 +45,7 @@ const params = [
   { name: 'max_tokens', type: 'number', req: false, desc: 'Максимальное число токенов в ответе' },
 ];
 
-function CodeBlock({ code, label }: { code: string; label: string }) {
+function CodeBlock({ code, label, tr }: { code: string; label: string; tr: (k: string) => string }) {
   const [copied, setCopied] = useState(false);
   const copy = () => {
     navigator.clipboard.writeText(code);
@@ -62,7 +62,7 @@ function CodeBlock({ code, label }: { code: string; label: string }) {
           style={{ color: copied ? 'white' : 'rgba(255,255,255,0.35)', background: copied ? 'rgba(255,255,255,0.08)' : 'transparent' }}
         >
           <Icon name={copied ? 'Check' : 'Copy'} size={12} />
-          {copied ? 'Скопировано' : 'Копировать'}
+          {copied ? tr('docs_copied') : tr('docs_copy')}
         </button>
       </div>
       <pre className="p-4 text-xs overflow-x-auto font-mono-ox" style={{ color: 'rgba(255,255,255,0.75)', lineHeight: 1.7 }}>
@@ -92,7 +92,7 @@ export default function DocsPage() {
             <Icon name="Link" size={16} style={{ color: 'rgba(255,255,255,0.5)' }} />
             {tr('docs_base_url')}
           </h2>
-          <CodeBlock code={BASE_URL} label="Base URL" />
+          <CodeBlock code={BASE_URL} label="Base URL" tr={tr} />
         </section>
 
         {/* Auth */}
@@ -102,14 +102,14 @@ export default function DocsPage() {
             {tr('docs_auth')}
           </h2>
           <p className="text-sm mb-3" style={{ color: 'rgba(255,255,255,0.5)' }}>{tr('docs_auth_desc')}</p>
-          <CodeBlock code={`Authorization: Bearer YOUR_API_KEY`} label="Header" />
+          <CodeBlock code={`Authorization: Bearer YOUR_API_KEY`} label="Header" tr={tr} />
         </section>
 
         {/* Endpoints */}
         <section className="mb-8">
           <h2 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
             <Icon name="Waypoints" size={16} style={{ color: 'rgba(255,255,255,0.5)' }} />
-            Endpoints
+            {tr('docs_endpoints')}
           </h2>
           <div className="space-y-3">
             {[
@@ -138,7 +138,7 @@ export default function DocsPage() {
           <div className="rounded-2xl overflow-hidden" style={{ border: '1px solid rgba(255,255,255,0.07)' }}>
             <div className="grid grid-cols-4 px-4 py-2 text-xs font-bold"
               style={{ background: 'rgba(255,255,255,0.05)', color: 'rgba(255,255,255,0.5)', gridTemplateColumns: '1fr 1fr auto 2fr' }}>
-              <span>Параметр</span><span>Тип</span><span>Обяз.</span><span>Описание</span>
+              <span>{tr('docs_col_param')}</span><span>{tr('docs_col_type')}</span><span>{tr('docs_col_req')}</span><span>{tr('docs_col_desc')}</span>
             </div>
             {params.map((p, i) => (
               <div
@@ -149,7 +149,7 @@ export default function DocsPage() {
                 <code className="font-mono-ox text-xs text-white">{p.name}</code>
                 <span className="text-xs font-mono-ox" style={{ color: '#7aaeff' }}>{p.type}</span>
                 <span className="text-xs font-mono-ox ml-2" style={{ color: p.req ? '#6ec97a' : 'rgba(255,255,255,0.25)' }}>
-                  {p.req ? 'да' : 'нет'}
+                  {p.req ? tr('docs_yes') : tr('docs_no')}
                 </span>
                 <span className="text-xs" style={{ color: 'rgba(255,255,255,0.5)' }}>{p.desc}</span>
               </div>
@@ -163,7 +163,7 @@ export default function DocsPage() {
             <Icon name="Code2" size={16} style={{ color: 'rgba(255,255,255,0.5)' }} />
             {tr('docs_example')}
           </h2>
-          <CodeBlock code={requestExample} label="JavaScript / fetch" />
+          <CodeBlock code={requestExample} label="JavaScript / fetch" tr={tr} />
         </section>
 
         {/* Response */}
@@ -172,7 +172,7 @@ export default function DocsPage() {
             <Icon name="FileJson" size={16} style={{ color: 'rgba(255,255,255,0.5)' }} />
             {tr('docs_response')}
           </h2>
-          <CodeBlock code={responseExample} label="JSON Response" />
+          <CodeBlock code={responseExample} label="JSON Response" tr={tr} />
         </section>
 
         {/* Limits */}
@@ -180,10 +180,9 @@ export default function DocsPage() {
           <div className="p-5 rounded-2xl flex items-start gap-3" style={{ background: 'rgba(255,200,50,0.05)', border: '1px solid rgba(255,200,50,0.12)' }}>
             <Icon name="AlertTriangle" size={18} style={{ color: 'rgba(255,200,50,0.7)', flexShrink: 0, marginTop: 2 }} />
             <div>
-              <p className="text-sm font-semibold mb-1" style={{ color: 'rgba(255,200,50,0.8)' }}>Лимиты</p>
-              <p className="text-sm" style={{ color: 'rgba(255,255,255,0.5)' }}>
-                Каждый пользователь имеет лимит <strong className="text-white">256 запросов в сутки</strong>. Лимит сбрасывается в 00:00 UTC. Счётчик отображается в боковой панели чата.
-              </p>
+              <p className="text-sm font-semibold mb-1" style={{ color: 'rgba(255,200,50,0.8)' }}>{tr('docs_limits')}</p>
+              <p className="text-sm" style={{ color: 'rgba(255,255,255,0.5)' }}
+                dangerouslySetInnerHTML={{ __html: tr('docs_limits_desc') }} />
             </div>
           </div>
         </section>

@@ -69,7 +69,7 @@ export default function HistoryPage({ setPage }: HistoryPageProps) {
               onClick={() => setPage('chat')}
               className="ox-btn-primary px-6 py-3 rounded-xl font-semibold text-sm"
             >
-              Открыть чат
+              {tr('history_open_chat')}
             </button>
           </div>
         ) : (
@@ -91,7 +91,7 @@ export default function HistoryPage({ setPage }: HistoryPageProps) {
                       {s.title}
                     </p>
                     <p className="text-xs mt-1 font-mono-ox" style={{ color: 'rgba(255,255,255,0.3)' }}>
-                      {new Date(s.createdAt).toLocaleDateString()} · {s.messages.length} сообщ.
+                      {new Date(s.createdAt).toLocaleDateString()} · {s.messages.length} {tr('history_messages')}
                     </p>
                   </div>
                   <button
@@ -140,7 +140,7 @@ export default function HistoryPage({ setPage }: HistoryPageProps) {
               ) : (
                 <div className="h-full flex items-center justify-center rounded-2xl py-20"
                   style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.06)' }}>
-                  <p className="text-sm" style={{ color: 'rgba(255,255,255,0.25)' }}>Выберите чат слева</p>
+                  <p className="text-sm" style={{ color: 'rgba(255,255,255,0.25)' }}>{tr('history_select')}</p>
                 </div>
               )}
             </div>

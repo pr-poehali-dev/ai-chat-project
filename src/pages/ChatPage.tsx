@@ -55,13 +55,15 @@ function saveSessions(sessions: ChatSession[]) {
   localStorage.setItem(SESSIONS_KEY, JSON.stringify(sessions));
 }
 
-export default function ChatPage() {
+interface ChatPageProps {
+  setPage: (p: string) => void;
+}
+
+export default function ChatPage({ setPage }: ChatPageProps) {
   const { tr } = useLang();
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
-  const [thinkingMode, setThinkingMode] = useState(false);
-  const [searchMode, setSearchMode] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [sessions, setSessions] = useState<ChatSession[]>(getSessions);
   const [currentSessionId, setCurrentSessionId] = useState<string | null>(null);
@@ -197,7 +199,7 @@ export default function ChatPage() {
       const errMsg: Message = {
         id: (Date.now() + 1).toString(),
         role: 'assistant',
-        content: `Ошибка соединения. Попробуйте ещё раз.`,
+        content: tr('chat_error'),
         timestamp: new Date(),
       };
       setMessages(prev => [...prev, errMsg]);
@@ -231,7 +233,7 @@ export default function ChatPage() {
           borderRight: '1px solid rgba(255,255,255,0.06)',
         }}
       >
-        <div style={{ width: 260, padding: '72px 12px 12px' }} className="flex flex-col h-full">
+        <div style={{ width: 260, padding: '12px' }} className="flex flex-col h-full">
           <button
             onClick={newChat}
             className="flex items-center gap-2 w-full px-4 py-3 rounded-xl mb-4 text-sm font-medium transition-all ox-btn-primary"
@@ -276,7 +278,7 @@ export default function ChatPage() {
           {/* Usage counter */}
           <div className="mt-4 px-3 py-3 rounded-xl" style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)' }}>
             <div className="flex justify-between items-center mb-2">
-              <span className="text-xs" style={{ color: 'rgba(255,255,255,0.4)', fontFamily: 'IBM Plex Mono' }}>Запросов сегодня</span>
+              <span className="text-xs" style={{ color: 'rgba(255,255,255,0.4)', fontFamily: 'IBM Plex Mono' }}>{tr('chat_usage_today')}</span>
               <span className="text-xs font-bold" style={{ color: remaining < 20 ? '#ff6b6b' : 'rgba(255,255,255,0.7)', fontFamily: 'IBM Plex Mono' }}>
                 {usageCount}/{DAILY_LIMIT}
               </span>
@@ -295,27 +297,42 @@ export default function ChatPage() {
       <div className="flex-1 flex flex-col min-w-0">
         {/* Chat topbar */}
         <div
-          className="flex items-center gap-3 px-4 py-3 flex-shrink-0"
-          style={{ borderBottom: '1px solid rgba(255,255,255,0.06)', background: 'rgba(8,8,8,0.9)', paddingTop: 72 }}
+          className="flex items-center gap-2 px-3 py-2 flex-shrink-0"
+          style={{ borderBottom: '1px solid rgba(255,255,255,0.06)', background: 'rgba(8,8,8,0.97)', height: 52 }}
         >
           <button
             onClick={() => setSidebarOpen(!sidebarOpen)}
-            className="p-2 rounded-lg transition-all"
+            className="p-2 rounded-lg transition-all flex-shrink-0"
             style={{ color: sidebarOpen ? 'white' : 'rgba(255,255,255,0.45)', background: sidebarOpen ? 'rgba(255,255,255,0.08)' : 'transparent' }}
           >
             <Icon name="PanelLeft" size={18} />
           </button>
 
-          <div className="flex items-center gap-2 flex-1">
-            <OxLogo size={24} glow className="rounded-md" />
+          <button onClick={() => setPage('home')} className="flex items-center gap-2 flex-shrink-0">
+            <OxLogo size={22} glow className="rounded-md" />
             <span className="font-semibold text-sm text-white">OxiwisAI</span>
-            <span className="text-xs font-mono-ox" style={{ color: 'rgba(255,255,255,0.3)' }}>~1T params</span>
-          </div>
+          </button>
 
-          <div className="flex items-center gap-2">
+          <div className="flex-1" />
+
+          <div className="flex items-center gap-1">
+            {[
+              { key: 'about', label: tr('nav_about') },
+              { key: 'docs', label: tr('nav_docs') },
+              { key: 'history', label: tr('nav_history') },
+            ].map(p => (
+              <button
+                key={p.key}
+                onClick={() => setPage(p.key)}
+                className="text-xs px-2.5 py-1.5 rounded-lg transition-all hidden sm:block"
+                style={{ color: 'rgba(255,255,255,0.4)' }}
+              >
+                {p.label}
+              </button>
+            ))}
             <button
               onClick={newChat}
-              className="p-2 rounded-lg transition-all"
+              className="p-2 rounded-lg transition-all ml-1"
               style={{ color: 'rgba(255,255,255,0.4)', background: 'rgba(255,255,255,0.04)' }}
               title={tr('chat_new')}
             >
@@ -404,7 +421,7 @@ export default function ChatPage() {
         <div className="px-4 pb-4 pt-3 flex-shrink-0" style={{ borderTop: '1px solid rgba(255,255,255,0.06)' }}>
           {usageCount >= DAILY_LIMIT && (
             <div className="mb-3 px-4 py-2 rounded-xl text-center text-sm" style={{ background: 'rgba(255,50,50,0.08)', color: '#ff6b6b', border: '1px solid rgba(255,50,50,0.15)' }}>
-              Лимит {DAILY_LIMIT} запросов в сутки исчерпан. Возвращайтесь завтра.
+              {tr('chat_limit_exceeded').replace('{limit}', String(DAILY_LIMIT))}
             </div>
           )}
 
@@ -433,7 +450,7 @@ export default function ChatPage() {
             </button>
           </div>
           <p className="text-center text-xs mt-2" style={{ color: 'rgba(255,255,255,0.2)', fontFamily: 'IBM Plex Mono' }}>
-            {remaining} / {DAILY_LIMIT} запросов осталось сегодня
+            {remaining} / {DAILY_LIMIT} {tr('chat_remaining')}
           </p>
         </div>
       </div>
