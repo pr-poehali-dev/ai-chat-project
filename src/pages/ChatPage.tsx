@@ -143,13 +143,11 @@ export default function ChatPage() {
     setUsageCount(getUsageToday());
 
     try {
-      const body: Record<string, unknown> = {
+      const body = {
         model: 'oxiwis-ai',
         messages: newMessages.map(m => ({ role: m.role, content: m.content })),
         stream: false,
       };
-      if (thinkingMode) body.thinking = { type: 'enabled', budget_tokens: 8000 };
-      if (searchMode) body.tools = [{ type: 'web_search' }];
 
       const res = await fetch(CHAT_URL, {
         method: 'POST',
@@ -314,44 +312,10 @@ export default function ChatPage() {
             <span className="text-xs font-mono-ox" style={{ color: 'rgba(255,255,255,0.3)' }}>~1T params</span>
           </div>
 
-          {/* Mode toggles */}
           <div className="flex items-center gap-2">
             <button
-              onClick={() => setThinkingMode(!thinkingMode)}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all"
-              style={thinkingMode ? {
-                background: 'white',
-                color: '#080808',
-                border: '1px solid white',
-              } : {
-                background: 'rgba(255,255,255,0.06)',
-                color: 'rgba(255,255,255,0.5)',
-                border: '1px solid rgba(255,255,255,0.08)',
-              }}
-            >
-              <Icon name="Brain" size={12} />
-              {tr('mode_thinking')}
-            </button>
-            <button
-              onClick={() => setSearchMode(!searchMode)}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all"
-              style={searchMode ? {
-                background: 'white',
-                color: '#080808',
-                border: '1px solid white',
-              } : {
-                background: 'rgba(255,255,255,0.06)',
-                color: 'rgba(255,255,255,0.5)',
-                border: '1px solid rgba(255,255,255,0.08)',
-              }}
-            >
-              <Icon name="Globe" size={12} />
-              {tr('mode_search')}
-            </button>
-
-            <button
               onClick={newChat}
-              className="p-2 rounded-lg transition-all ml-1"
+              className="p-2 rounded-lg transition-all"
               style={{ color: 'rgba(255,255,255,0.4)', background: 'rgba(255,255,255,0.04)' }}
               title={tr('chat_new')}
             >
